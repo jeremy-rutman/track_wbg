@@ -63,9 +63,9 @@ def find_face_dlib_with_scores(image, visual_output=True,threshold=0.2):
 
             cv2.rectangle(image,(d.left(), d.top()), (d.left()+d.width(),d.top()+d.height()),[255,100,0],thickness=2)
             cv2.putText(image,'face'+str(round(scores[i],3)),(d.left()+10,d.top()+10),cv2.FONT_HERSHEY_COMPLEX,0.5,[100,200,100])
-    if visual_output:
-        cv2.imshow('dets',image)
-        cv2.waitKey(30)
+            if visual_output:
+                cv2.imshow('dets',image)
+                cv2.waitKey(30)
 
 
     #final_faces = choose_faces(image, faces, max_num_of_faces)
@@ -75,8 +75,10 @@ def find_face_dlib_with_scores(image, visual_output=True,threshold=0.2):
 class c_t():
     def __init__(self,initial_image_array,bbox_xywh):
         self.tracker=dlib.correlation_tracker()
-        bbox_x1y1x2y2=[bbox_xywh[0],bbox_xywh[1],bbox_xywh[0]+bbox_xywh[2],bbox_xywh[1]+bbox_xywh[3]]
-        self.tracker.start_track(initial_image_array,dlib.rectangle(bbox_x1y1x2y2))
+        bbox_x1y1x2y2=[long(bbox_xywh[0]),long(bbox_xywh[1]),long(bbox_xywh[0]+bbox_xywh[2]),long(bbox_xywh[1]+bbox_xywh[3])]
+        print('tracker being started with box {}'.format(bbox_x1y1x2y2))
+##        self.tracker.start_track(initial_image_array,dlib.rectangle(*[1,2,3,4]))
+        self.tracker.start_track(initial_image_array,dlib.rectangle(*bbox_x1y1x2y2))
         self.visual_output=True
 
     def next_frame(self,img_arr):
@@ -84,17 +86,19 @@ class c_t():
         rect = self.tracker.get_position()
         pt1 = (int(rect.left()), int(rect.top()))
         pt2 = (int(rect.right()), int(rect.bottom()))
-        cv2.rectangle(img_arr, pt1, pt2, (255, 0, 255), 3)
         print "Object tracked at [{}, {}] \r".format(pt1, pt2),
-        if self.visual_output:
+        if self.visual_output:public
+
+            cv2.rectangle(img_arr, pt1, pt2, (255, 0, 255), 3)
             loc = (int(rect.left()), int(rect.top()-20))
             txt = "corrtrack {}, {}".format(pt1, pt2)
             cv2.putText(img_arr, txt, loc , cv2.FONT_HERSHEY_SIMPLEX, .5, (255,0,255), 1)
-        cv2.namedWindow("Image", cv2.WINDOW_NORMAL)
-        cv2.imshow("Image", img_arr)
-        # Continue until the user presses ESC key
-        cv2.waitKey(1)
-
+            cv2.namedWindow("Image", cv2.WINDOW_NORMAL)
+            cv2.imshow("Image", img_arr)
+            # Continue until the user presses ESC key
+            cv2.waitKey(1)
+        bbox_xywh = [rect.left(),rect.top(),rect.width,rect.height()]
+        return bbox_xywh
 
 
 if __name__ =="__main__":

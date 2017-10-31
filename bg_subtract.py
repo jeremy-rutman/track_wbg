@@ -4,7 +4,7 @@ import numpy as np
 import cv2
 from ml_utils import imutils
 import os
-
+import copy
 
 class bg_sub():
     def __init__(self):
@@ -18,10 +18,11 @@ class bg_sub():
 
     def next_frame(self,img_arr):
         self.frame_no += 1
+        frame=copy.copy(img_arr)
         print('frame {}'.format(self.frame_no))
         h,w=frame.shape[0:2]
         area=h*w
-        frame_gray = cv2.cvtColor(img_arr,cv2.COLOR_BGR2GRAY)
+        frame_gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
         blursize=11
         frame_blur = cv2.GaussianBlur(frame_gray, (blursize,blursize), 0)
         fgmask = self.fgbg.apply(frame_blur)
@@ -76,14 +77,14 @@ class bg_sub():
 
 
         if self.visual_output:
-            cv2.imshow('orig',frame)
-            cv2.imshow('thresh',thresh)
-            cv2.imshow('fgmask2',fgmask)
+            cv2.imshow('motion dets',frame)
+#            cv2.imshow('thresh',thresh)
+#            cv2.imshow('fgmask2',fgmask)
             k = cv2.waitKey(0) & 0xff
         if self.frame_no<5:
             return([])
         else:
-            print('accepted boxes:{}'.format(self.big_enough_boxes))
+            print('motion_detect found {} boxes:{}'.format(len(self.big_enough_boxes),self.big_enough_boxes))
             return self.big_enough_boxes
 
 
