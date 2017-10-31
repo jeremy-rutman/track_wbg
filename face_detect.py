@@ -87,8 +87,7 @@ class c_t():
         pt1 = (int(rect.left()), int(rect.top()))
         pt2 = (int(rect.right()), int(rect.bottom()))
         print "Object tracked at [{}, {}] \r".format(pt1, pt2),
-        if self.visual_output:public
-
+        if self.visual_output:
             cv2.rectangle(img_arr, pt1, pt2, (255, 0, 255), 3)
             loc = (int(rect.left()), int(rect.top()-20))
             txt = "corrtrack {}, {}".format(pt1, pt2)
