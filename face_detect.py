@@ -11,6 +11,7 @@ from ml_utils import imutils
 
 
 detector = dlib.get_frontal_face_detector()
+#detector = dlib.cnn_face_detection_model_v1() #supposed to be better
 
 def find_face_dlib(image, max_num_of_faces=10):
     faces = detector(image, 1)
@@ -79,7 +80,7 @@ class c_t():
         print('tracker being started with box {}'.format(bbox_x1y1x2y2))
 ##        self.tracker.start_track(initial_image_array,dlib.rectangle(*[1,2,3,4]))
         self.tracker.start_track(initial_image_array,dlib.rectangle(*bbox_x1y1x2y2))
-        self.visual_output=True
+        self.visual_output=False
 
     def next_frame(self,img_arr):
         self.tracker.update(img_arr)
@@ -96,7 +97,7 @@ class c_t():
             cv2.imshow("Image", img_arr)
             # Continue until the user presses ESC key
             cv2.waitKey(1)
-        bbox_xywh = [rect.left(),rect.top(),rect.width,rect.height()]
+        bbox_xywh = [int(rect.left()),int(rect.top()),int(rect.width()),int(rect.height())]
         return bbox_xywh
 
 

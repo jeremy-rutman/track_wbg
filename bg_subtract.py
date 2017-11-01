@@ -19,7 +19,7 @@ class bg_sub():
     def next_frame(self,img_arr):
         self.frame_no += 1
         frame=copy.copy(img_arr)
-        print('frame {}'.format(self.frame_no))
+       # print('frame {}'.format(self.frame_no))
         h,w=frame.shape[0:2]
         area=h*w
         frame_gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
@@ -41,7 +41,7 @@ class bg_sub():
                 continue
             # compute the bounding box for the contour, draw it on the frame,
             # and update the text
-            print('box frac of image {}'.format(cv2.contourArea(c)/area))
+          #  print('box frac of image {}'.format(cv2.contourArea(c)/area))
             (x, y, w, h) = cv2.boundingRect(c)
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
             box = [x,y,w,h]
