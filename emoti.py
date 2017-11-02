@@ -34,8 +34,8 @@ def emotion_det(image_file):
     prediction = VGG_S_Net.predict([input_image],oversample=False)
     print 'predicted category is {0}'.format(categories[prediction.argmax()])
     print prediction[0]
-    return prediction[0]
-
+#    return prediction[0]
+    return categories[prediction.argmax()]
 
 
 
