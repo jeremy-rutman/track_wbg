@@ -15,6 +15,7 @@ proto_data = open(mean_filename, "rb").read()
 a = caffe.io.caffe_pb2.BlobProto.FromString(proto_data)
 mean  = caffe.io.blobproto_to_array(a)[0][0]
 
+mean = np.zeros([256,256],dtype=np.uint8)
 print('mean shape {}'.format(mean.shape))
 
 net_pretrained = os.path.join(DEMO_DIR,cur_net_dir,'EmotiW_VGG_S.caffemodel')
