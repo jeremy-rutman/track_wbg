@@ -22,7 +22,7 @@ net_pretrained = os.path.join(DEMO_DIR,cur_net_dir,'EmotiW_VGG_S.caffemodel')
 net_model_file = os.path.join(DEMO_DIR,cur_net_dir,'deploy.prototxt')
 
 VGG_S_Net = caffe.Classifier(net_model_file, net_pretrained,
-                       mean=mean,
+#                       mean=mean,
                        channel_swap=(2,1,0),
                        raw_scale=255,
                        image_dims=(256, 256))
