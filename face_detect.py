@@ -30,7 +30,7 @@ def find_face_fr(image_file,visual_output=False,threshold=0.2):
         print("Detection {}, score: {}, face_type:{}".format(d, scores[i], idx[i]))
         print d
         if 2>threshold:
-            output_dict.append({'object':'face','confidence':scores[i],'box_xywh':[d.left(),d.top(),d.left()+d.width(),d.top()+d.height()]})
+            output_dict.append({'object':'face','confidence':scores[i],'bbox_xywh':[d.left(),d.top(),d.left()+d.width(),d.top()+d.height()]})
 
             cv2.rectangle(image,(d.left(), d.top()), (d.left()+d.width(),d.top()+d.height()),[255,100,0],thickness=2)
             cv2.putText(image,'face'+str(round(scores[i],3)),(d.left()+10,d.top()+10),cv2.FONT_HERSHEY_COMPLEX,0.5,[100,200,100])
