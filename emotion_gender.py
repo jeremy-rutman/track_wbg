@@ -6,7 +6,7 @@ from keras.models import load_model
 import numpy as np
 import os
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"   # see issue #152
-os.environ["CUDA_VISIBLE_DEVICES"] = ""
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 from face_classification.src.utils.datasets import get_labels
 from face_classification.src.utils.inference import detect_faces
