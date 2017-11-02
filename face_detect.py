@@ -22,7 +22,7 @@ def find_face_dlib(image, max_num_of_faces=10):
     final_faces = choose_faces(image, faces, max_num_of_faces)
     return {'are_faces': len(final_faces) > 0, 'faces': final_faces}
 
-def find_face_fr(image_file,visual_output=True,threshold=0.2):
+def find_face_fr(image_file,visual_output=False,threshold=0.2):
     image = face_recognition.load_image_file(image_file)
     faces = face_recognition.face_locations(image)
     output_dict=[]
