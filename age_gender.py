@@ -29,8 +29,8 @@ age_net = caffe.Classifier(age_net_model_file, age_net_pretrained,
                        raw_scale=255,
                        image_dims=(256, 256))
 
-gender_net_pretrained='./gender_net.caffemodel'
-gender_net_model_file='./deploy_gender.prototxt'
+gender_net_pretrained=os.path.join(models_dir,'gender_net.caffemodel')
+gender_net_model_file=os.path.join(models_dir,'deploy_gender.prototxt')
 gender_net = caffe.Classifier(gender_net_model_file, gender_net_pretrained,
                   #     mean=mean,
                        channel_swap=(2,1,0),
