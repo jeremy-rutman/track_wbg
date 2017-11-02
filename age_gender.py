@@ -40,7 +40,7 @@ gender_net = caffe.Classifier(gender_net_model_file, gender_net_pretrained,
 age_list=['(0, 2)','(4, 6)','(8, 12)','(15, 20)','(25, 32)','(38, 43)','(48, 53)','(60, 100)']
 gender_list=['Male','Female']
 
-def age_gender(img_file)
+def age_gender(img_file):
 #example_image = './example_image.jpg'
     input_image = caffe.io.load_image(img_file)
     #_ = plt.imshow(input_image)
