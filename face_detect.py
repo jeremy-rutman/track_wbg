@@ -39,7 +39,7 @@ def find_face_fr(image_file,visual_output=False,threshold=0.2):
         cv2.waitKey(30)
 
 
-def find_face_dlib_with_scores(image_file_or_array, visual_output=True,threshold=0.2):
+def find_face_dlib_with_scores(image, visual_output=True,threshold=0.2):
     '''
     return the full info including scores
     :param image:
@@ -48,7 +48,7 @@ def find_face_dlib_with_scores(image_file_or_array, visual_output=True,threshold
     '''
     start=time.time()
     if isinstance(image,basestring):
-        image = imutils.get_cv2_img_array(image_file_or_array)
+        image = imutils.get_cv2_img_array(image)
    ## faces, scores, idx = detector.run(image, 1, -1) - gives more results, those that add low confidence percentage ##
     ## faces, scores, idx = detector.run(image, 1, 1) - gives less results, doesn't show the lowest confidence percentage results ##
         ## faces, scores, idx = detector.run(image, 2) - gives more results using more time by scaling ##
