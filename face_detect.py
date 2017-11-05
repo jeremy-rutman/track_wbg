@@ -39,7 +39,7 @@ def find_face_fr(image_file,visual_output=False,threshold=0.2):
         cv2.waitKey(30)
 
 
-def find_face_dlib_with_scores(image, visual_output=True,threshold=0.2):
+def find_face_dlib_with_scores(image_file_or_array, visual_output=True,threshold=0.2):
     '''
     return the full info including scores
     :param image:
@@ -48,7 +48,7 @@ def find_face_dlib_with_scores(image, visual_output=True,threshold=0.2):
     '''
     start=time.time()
     if isinstance(image,basestring):
-        image = imutils.get_cv2_img_array(image)
+        image = imutils.get_cv2_img_array(image_file_or_array)
    ## faces, scores, idx = detector.run(image, 1, -1) - gives more results, those that add low confidence percentage ##
     ## faces, scores, idx = detector.run(image, 1, 1) - gives less results, doesn't show the lowest confidence percentage results ##
         ## faces, scores, idx = detector.run(image, 2) - gives more results using more time by scaling ##
@@ -69,7 +69,7 @@ def find_face_dlib_with_scores(image, visual_output=True,threshold=0.2):
                 cv2.waitKey(30)
 
 
-    #final_faces = choose_faces(image, faces, max_num_of_faces)
+    #final_faces = choose_faces(image, faces, max_num_of_faces)c
 
     return(output_dict)
 
@@ -100,6 +100,36 @@ class c_t():
         bbox_xywh = [int(rect.left()),int(rect.top()),int(rect.width()),int(rect.height())]
         return bbox_xywh
 
+def dlib_speed_test(picdir = '/data/jeremy/image_dbs/variant/longfeld_video/'):
+#    export OPENBLAS_NUM_THREADS=1 in the environment variables.
+#avg 0.688s with visual_output=True on single cpu
+#0.683s with visual_output=False
+#0.634s with openblas_um_threads=4, 0.64s n=1
+
+#https://github.com/cmusatyalab/openface/issues/157
+# If you are interested in details:
+#
+# Dlib's face detector has no GPU support
+# Detector does not use color information - greyscale images will work faster
+# For best performance you can downscale images, because dlib works with small 80x80 faces for detection and use scanner.set_max_pyramid_levels(1) to exclude scanning of large faces. And also face detector has 5 cascades inside - they can be splitted if you need only frontal-looking faces for example;
+# GCC-compiled code works much faster than any MSVC. MSVC 2015 works much faster than MSVC 2013
+# OpenCV's function cv::equalizeHist will make it find more faces
+
+    files = [f for f in os.listdir(picdir) if f[-4:]=='.jpg']
+    files.sort()
+    start_time=time.time()
+    for i,f in enumerate(files):
+        current_start=time.time()
+        full_path = os.path.join(picdir,f)
+        if not os.path.isfile(full_path):
+            print('not a good file...')
+            continue
+        print('working on '+full_path)
+        info = find_face_dlib_with_scores(full_path,visual_output=False)
+        print info
+        current_elapsed=time.time()-current_start
+        all_elapsed=time.time()-start_time
+        print('current {} overall {}'.format(current_elapsed,all_elapsed/(i+1)))
 
 if __name__ =="__main__":
     picdir = '/data/jeremy/image_dbs/variant/viettel_demo/'

@@ -9,10 +9,10 @@ import copy
 class bg_sub():
     def __init__(self):
         self.fgbg = cv2.createBackgroundSubtractorKNN()
-        self.visual_output=True
-        self.smallest_box_fraction=0.001
-        self.movement_threshold = 50 #graylevel out of 255, thresh on createBackgroundSubtractorKnn.apply
-        self.ioma_thresh = 0.2 #any overlap of two boxes greater than this causes smaller to get removed
+        self.visual_output=False
+        self.smallest_box_fraction=0.005  #if box is smaller than this fraction of image, drop it
+        self.movement_threshold = 70 #graylevel out of 255, thresh on createBackgroundSubtractorKnn.apply
+        self.ioma_thresh = 0.05 #any overlap of two boxes greater than this causes smaller to get removed
         self.big_enough_contours=[]
         self.frame_no = 0
 
@@ -23,7 +23,7 @@ class bg_sub():
         h,w=frame.shape[0:2]
         area=h*w
         frame_gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
-        blursize=11
+        blursize=15
         frame_blur = cv2.GaussianBlur(frame_gray, (blursize,blursize), 0)
         fgmask = self.fgbg.apply(frame_blur)
 
@@ -45,17 +45,21 @@ class bg_sub():
             (x, y, w, h) = cv2.boundingRect(c)
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
             box = [x,y,w,h]
+            print('{} had enough motion'.format(box))
         #check if lots of overlap
-            for i,other_box in enumerate(self.big_enough_boxes):
+            too_much_overlap=False
+            for i,det in enumerate(self.big_enough_boxes):
+                other_box = det['bbox_xywh']
                 print('check overlap bet {} and {}'.format(box,other_box))
                 intersection_over_minarea=imutils.intersectionOverMinArea(other_box,box)
                 if intersection_over_minarea>self.ioma_thresh:
-                    print('too much overlap')
-                    cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 255), 2)
+                    too_much_overlap=True
+                    cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
                     combined_box = imutils.combine_bbs(box,other_box)
-                    self.big_enough_boxes[i]=combined_box
+                    self.big_enough_boxes[i]={'bbox_xywh':combined_box}
                     cv2.rectangle(frame, (combined_box[0],combined_box[1]),
-                                  (combined_box[0]+combined_box[2],combined_box[1] + combined_box[3]), (100, 100, 255), 2)
+                                  (combined_box[0]+combined_box[2],combined_box[1] + combined_box[3]), (0, 0, 255), 2)
+                    print('too much overlap, combined {} and {} into {}'.format(other_box,box,combined_box))
                     # area1=box[2]*box[3]
                     # area2=other_box[2]*other_box[3]
                     # if area2>area1: #otherbox is bigger, remove current
@@ -72,8 +76,9 @@ class bg_sub():
                     #     x2,y2,w2,h2=self.big_enough_boxes[i]
                     #     cv2.rectangle(frame, (x2, y2), (x2 + w2, y2 + h2), (255, 0, 255), 2)
                     #     del self.big_enough_boxes[i]
-                else:
-                    self.big_enough_boxes.append(box)
+            if not too_much_overlap:
+                print('{} did not have too much overlap'.format(box))
+                self.big_enough_boxes.append({'bbox_xywh':box})
 
 
         if self.visual_output:
