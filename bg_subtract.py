@@ -2,7 +2,7 @@ __author__ = 'jeremy'
 
 import numpy as np
 import cv2
-from ml_utils import imutils
+#from ml_utils import imutils
 import os
 import copy
 
@@ -51,11 +51,11 @@ class bg_sub():
             for i,det in enumerate(self.big_enough_boxes):
                 other_box = det['bbox_xywh']
                 print('check overlap bet {} and {}'.format(box,other_box))
-                intersection_over_minarea=imutils.intersectionOverMinArea(other_box,box)
+                intersection_over_minarea=intersectionOverMinArea(other_box,box)
                 if intersection_over_minarea>self.ioma_thresh:
                     too_much_overlap=True
                     cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
-                    combined_box = imutils.combine_bbs(box,other_box)
+                    combined_box = combine_bbs(box,other_box)
                     self.big_enough_boxes[i]={'bbox_xywh':combined_box}
                     cv2.rectangle(frame, (combined_box[0],combined_box[1]),
                                   (combined_box[0]+combined_box[2],combined_box[1] + combined_box[3]), (0, 0, 255), 2)
@@ -91,6 +91,41 @@ class bg_sub():
         else:
             print('motion_detect found {} boxes:{}'.format(len(self.big_enough_boxes),self.big_enough_boxes))
             return self.big_enough_boxes
+
+def intersectionOverMinArea(r1,r2):
+    '''
+    r1,r2 in form xywh
+    :param r1:
+    :param r2:
+    :return:
+    '''
+
+    intersectionx = int(max(r1[0], r2[0]))
+    intersectiony = int(max(r1[1], r2[1]))
+    intersectionw = int(min(r1[0] + r1[2], r2[0] + r2[2])) - int(intersectionx)
+    if intersectionw < 0:
+        intersectionw = 0
+    intersectionh = int(min(r1[1] + r1[3], r2[1] + r2[3])) - int(intersectiony)
+    if intersectionh < 0:
+        intersectionh = 0
+        # intersectionh -= intersectiony;
+        # print('r1:' + str(r1) + ' r2:' + str(r2) + ' x,y,w,h:' + str(intersectionx) + ',' + str(intersectiony) + ',' + str(
+        # intersectionw) + ',' + str(
+        # intersectionh))
+    min_area=min(r1[2]*r1[3],r2[2]*r2[3])
+    intersectionarea = intersectionw * intersectionh
+    frac = float(intersectionarea) / float(min_area)
+    print('min_area,intarea,frac:' + str(min_area) + ',' + str(intersectionarea) + ',' + str(frac))
+    return (frac)
+
+def combine_bbs(bb1_xywh,bb2_xywh):
+    minx=min(bb1_xywh[0],bb2_xywh[0])
+    maxx=max(bb1_xywh[0]+bb1_xywh[2],bb2_xywh[0]+bb2_xywh[2])
+    miny=min(bb1_xywh[1],bb2_xywh[1])
+    maxy=min(bb1_xywh[1]+bb1_xywh[3],bb2_xywh[1]+bb2_xywh[3])
+    w=maxx-minx
+    h=maxy-miny
+    return(minx,miny,w,h)
 
 
 if __name__ == "__main__":
